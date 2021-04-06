@@ -57,7 +57,7 @@ def train():
     target_encoder.to(device)
 
     # LSTM
-    lstm_in = state_encoder.out_dim * 3
+    lstm_in = state_encoder.out_dim * 3 + 2
     lstm = LSTMNetwork(input_dim=lstm_in, hidden_dim=lstm_in*2, device=device)
     lstm.to(device)
 
@@ -123,6 +123,9 @@ def train():
             # global pos
             global_pos = sampled_batch['global_pos'].to(device)
 
+            # Motion conditioning
+            motion_condition = sampled_batch['seq_names'].to(device)
+
             lstm.init_hidden(current_batch_size)
             pred_list = []
             pred_list.append(global_pos[:,0])
@@ -170,7 +173,7 @@ def train():
                 prtbd_offset_target = offset_target + noise_multiplier * target_noise
 
                 # lstm
-                h_in = torch.cat([h_state, prtbd_offset_target], dim=1).unsqueeze(0)
+                h_in = torch.cat([h_state, prtbd_offset_target, motion_condition[:, t]], dim=1).unsqueeze(0)
                 h_out = lstm(h_in)
 
                 # decoder

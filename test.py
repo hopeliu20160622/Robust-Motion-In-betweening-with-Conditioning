@@ -64,7 +64,7 @@ def test():
     target_encoder.load_state_dict(torch.load(os.path.join(saved_weight_path, 'target_encoder.pkl'), map_location=device))
 
     # LSTM
-    lstm_in = state_encoder.out_dim * 3
+    lstm_in = state_encoder.out_dim * 3 + 2
     lstm = LSTMNetwork(input_dim=lstm_in, hidden_dim=lstm_in*2, device=device)
     lstm.to(device)
     lstm.load_state_dict(torch.load(os.path.join(saved_weight_path, 'lstm.pkl'), map_location=device))
@@ -108,6 +108,9 @@ def test():
             # global pos
             global_pos = sampled_batch['global_pos'].to(device)
 
+            # Motion conditioning
+            motion_condition = sampled_batch['seq_names'].to(device)
+
             lstm.init_hidden(current_batch_size)
 
             # Generating Frames. It uses fixed 50 frames of generation for now.
@@ -148,7 +151,7 @@ def test():
                 offset_target = torch.cat([h_offset, h_target], dim=1)
 
                 # lstm
-                h_in = torch.cat([h_state, offset_target], dim=1).unsqueeze(0)
+                h_in = torch.cat([h_state, offset_target, motion_condition[:, t]], dim=1).unsqueeze(0)
                 h_out = lstm(h_in)
             
                 # decoder
