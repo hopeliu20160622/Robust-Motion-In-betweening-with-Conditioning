@@ -151,6 +151,8 @@ def test():
                 offset_target = torch.cat([h_offset, h_target], dim=1)
 
                 # lstm
+                motion_condition[:, t, 0] = 1 * 3
+                motion_condition[:, t, 1] = 1 * 3
                 h_in = torch.cat([h_state, offset_target, motion_condition[:, t]], dim=1).unsqueeze(0)
                 h_out = lstm(h_in)
             
