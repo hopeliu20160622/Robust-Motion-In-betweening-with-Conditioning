@@ -1,6 +1,6 @@
 # Robust-Motion-In-betweening-with-Conditioning
 
-This is a simple experiment with conditioned motion based on Robust Motion In-betweening.
+This is a simple experiment based on Robust Motion In-betweening.
 
 Code is based on the implemenation of [Robust Motion In-betweening](https://github.com/jihoonerd/Robust-Motion-In-betweening)
 
